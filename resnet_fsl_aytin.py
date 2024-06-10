@@ -89,8 +89,8 @@ class ResNet18(Model):
         # global average pooling
         self.global_pool = GlobalAveragePooling2D()
 
-        # fully connected layer for 10 classes
-        self.fc_3 = Dense(10, activation="softmax")
+        # dense layer for embeddings
+        self.embedding = Dense(128)  # Adjust the size of the embedding as needed
 
     def call(self, inputs, training=False):
         x = self.conv_1(inputs, training=training)
@@ -110,4 +110,26 @@ class ResNet18(Model):
 
         x = self.global_pool(x)
 
-        return self.fc_3(x)
+        return self.embedding(x)  # Output embeddings instead of class probabilities
+
+
+class TripletModel(Model):
+    def __init__(self, embedding_model):
+        super(TripletModel, self).__init__()
+        self.embedding_model = embedding_model
+
+    # @tf.function
+    def call(self, inputs, training=False):
+        anchor, positive, negative = inputs[0][0], inputs[0][1], inputs[0][2]
+        anchor_embedding = self.embedding_model(anchor, training=training)
+        positive_embedding = self.embedding_model(positive, training=training)
+        negative_embedding = self.embedding_model(negative, training=training)
+        return anchor_embedding, positive_embedding, negative_embedding
+
+def triplet_loss(y_true, y_pred, alpha=0.2):
+    anchor, positive, negative = y_pred
+    pos_dist = tf.reduce_sum(tf.square(anchor - positive), axis=-1)
+    neg_dist = tf.reduce_sum(tf.square(anchor - negative), axis=-1)
+    loss = tf.maximum(pos_dist - neg_dist + alpha, 0.0)
+    return tf.reduce_mean(loss)
+
