@@ -62,9 +62,9 @@ class ResidualBlock(Layer):
 
         return self.activation(x_final)
 
-class ResNet18(Model):
+class ResNet18_fsl(Model):
     def __init__(self):
-        super(ResNet18, self).__init__()
+        super(ResNet18_fsl, self).__init__()
 
         # first layer
         self.conv_1 = MyConv2D(64, 7, 2, in_padding="same")
@@ -89,9 +89,6 @@ class ResNet18(Model):
         # global average pooling
         self.global_pool = GlobalAveragePooling2D()
 
-        # fully connected layer for 10 classes
-        self.fc_3 = Dense(10, activation="softmax")
-
     def call(self, inputs, training=False):
         x = self.conv_1(inputs, training=training)
         x = self.max_pool(x)
@@ -110,4 +107,4 @@ class ResNet18(Model):
 
         x = self.global_pool(x)
 
-        return self.fc_3(x)
+        return x
