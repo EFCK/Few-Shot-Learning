@@ -2,10 +2,7 @@ import tensorflow as tf
 
 from keras.models import Model
 from keras.layers import Layer
-from keras.layers import (GlobalAveragePooling2D, Activation, MaxPooling2D, Add, Conv2D, MaxPool2D, Dense,
-                                     Flatten, InputLayer, BatchNormalization, Input, Embedding, Permute,
-                                     Dropout, RandomFlip, RandomRotation, LayerNormalization, MultiHeadAttention,
-                                     RandomContrast, Rescaling, Resizing, Reshape)
+from keras.layers import (GlobalAveragePooling2D, Activation, Add, Conv2D, MaxPool2D, Dense, BatchNormalization, Input,)
 
 class MyConv2D(Layer):
     """
